@@ -1,3 +1,6 @@
+const request = require('request');
+const cheerio = require('cheerio');
+
 module.exports = async function App(context) {
   if (context.event.isText) {
     //await context.sendText(`${context.event.text}`);
@@ -14,6 +17,20 @@ module.exports = async function App(context) {
           }
         ]
       }});
+      });
+    }
+    else if(context.event.text.toLowerCase() === 'aktest'){
+      let opname = 'Blue_Poison';
+      request(`https://mrfz.fandom.com/wiki/${opname}`, (error, response, html) => {  
+      if (!error && response.statusCode == 200) {
+              const $ = cheerio.load(html);
+              const opimg = $('#pi-tab-0 > figure > a > img');
+              let url = opimg.attr('src');
+              context.replyImage({
+                originalContentUrl: url,
+                previewImageUrl: url,
+              });
+          }
       });
     }
   }
