@@ -168,8 +168,8 @@ module.exports = async function App(context) {
       request(`https://gamepress.gg/arknights/operator/${opname}`, (error, response, html) => {  
         if (!error && response.statusCode == 200) {
           const $ = cheerio.load(html);
-          const opimg = $(`#image-tab-${cgindex} > a`);
-          let url = opimg.attr('href');
+          const opimg = $(`#image-tab-${cgindex} > a > img`);
+          let url = `https://gamepress.gg${opimg.attr('data-cfsrc')}`;
           url && context.replyImage({
             originalContentUrl: url,
             previewImageUrl: url,
