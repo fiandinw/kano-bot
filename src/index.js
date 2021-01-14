@@ -24,7 +24,11 @@ module.exports = async function App(context) {
       },
       {
       type: 'action',
-      action: {type: 'message',label: 'arknights cg',text:'!akcg Blue_Poison 1'}
+      action: {type: 'message',label: 'arknights cg',text:'!akcg blue poison 1'}
+      },
+      {
+      type: 'action',
+      action: {type: 'message',label: 'arknights op',text:'!akinfo blue poison'}
       }
     ]
   }};
@@ -103,7 +107,7 @@ module.exports = async function App(context) {
     else if(eventText.search('!mal') === 0 ){
       const malrequest = eventText.substr(5).replace(' ','_');
       const uri = `https://myanimelist.net/search/all?q=${malrequest}&cat=all`;
-      context.replyTemplate('this is a template', {
+      context.replyTemplate('MAL Search', {
         type: 'buttons',
         thumbnailImageUrl: 'https://stickershop.line-scdn.net/stickershop/v1/sticker/11235734/android/sticker.png',
         title: 'My Anime List',
@@ -118,28 +122,54 @@ module.exports = async function App(context) {
       });
     }
 
+    //ak info
+    else if(eventText.search('!akinfo') === 0 ){
+      const akrequest = eventText.substr(8).replace(' ','_');
+      const uri = `https://aceship.github.io/AN-EN-Tags/akhrchars.html?opname=${akrequest}`;
+      context.replyTemplate('Arknights Operator Info', {
+        type: 'buttons',
+        thumbnailImageUrl: 'https://stickershop.line-scdn.net/stickershop/v1/sticker/11235734/android/sticker.png',
+        title: 'Arknights Operator Info',
+        text: 'Fitur ini masih dalam pengembangan',
+        actions: [
+          {
+            type: 'uri',
+            label: 'Hasil Pencarian',
+            uri: uri,
+          },
+        ],
+      });
+    }
+
     //arknights cg
     else if(eventText.search('!akcg') === 0){
-      let cgrequest = context.event.text.split(' ');
-      let cgindex = 0;
+      let cgrequest = eventText.split(' ');
+      let cgindex = 1;
 
-      if (cgrequest[cgrequest.length - 1] === '1') {
-        cgindex = 1;
-        cgrequest.pop();
-      } else if (cgrequest[cgrequest.length - 1] === '2') {
-        cgindex = 2;
-        cgrequest.pop();
-      } else if (cgrequest[cgrequest.length - 1] === '0') {
-        cgrequest.pop();
+      switch (cgrequest[cgrequest.length - 1]) {
+        case '1':
+          cgrequest.pop();break;
+        case '2':
+          cgindex = 2;cgrequest.pop();break;
+        case '3':
+          cgindex = 3;cgrequest.pop();break;
+        case '4':
+          cgindex = 6;cgrequest.pop();break;
+        case '5':
+          cgindex = 7;cgrequest.pop();break;
+        case '6':
+          cgindex = 8;cgrequest.pop();break;
+        default:
+          cgindex = 1;cgrequest.pop();break;
       }
 
-      let opname = cgrequest[1];
+      let opname = cgrequest.join('-').substr(6);
 
-      request(`https://mrfz.fandom.com/wiki/${opname}`, (error, response, html) => {  
+      request(`https://gamepress.gg/arknights/operator/${opname}`, (error, response, html) => {  
         if (!error && response.statusCode == 200) {
           const $ = cheerio.load(html);
-          const opimg = $(`#pi-tab-${cgindex} > figure > a > img`);
-          let url = opimg.attr('src');
+          const opimg = $(`#image-tab-${cgindex} > a`);
+          let url = opimg.attr('href');
           url && context.replyImage({
             originalContentUrl: url,
             previewImageUrl: url,
