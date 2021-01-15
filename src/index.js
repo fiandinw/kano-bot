@@ -16,7 +16,7 @@ module.exports = async function App(context) {
       },
       {
       type: 'action',
-      action: {type: 'message',label: 'mana kah?',text:'!mnkh ini - itu'}
+      action: {type: 'message',label: 'mana kah?',text:'!mnkh ini-itu'}
       },
       {
         type: 'action',
@@ -29,6 +29,10 @@ module.exports = async function App(context) {
       {
       type: 'action',
       action: {type: 'message',label: 'arknights op',text:'!akinfo blue poison'}
+      },
+      {
+      type: 'action',
+      action: {type: 'message',label: 'booru search',text:'!booru scenery blue_sky'}
       }
     ]
   }};
@@ -37,7 +41,6 @@ module.exports = async function App(context) {
     //lowercase context.event.text variable
     //console.log('reply is text');
     const eventText = context.event.text.toLowerCase();
-
     //Bot ping test
     if(eventText === 'kanoping'){
       context.replyText(`pong`);
@@ -56,7 +59,8 @@ module.exports = async function App(context) {
     eventText.includes('bangsat')||
     eventText.includes('pepek')||
     eventText.includes('goblok')||
-    eventText.includes('goblog')){
+    eventText.includes('goblog')||
+    eventText.includes('ngentot')){
       context.getUserProfile().then(profile => {
         context.replyText(`Gak boleh kasar ${profile.displayName} >:(`);
       });
@@ -134,7 +138,7 @@ module.exports = async function App(context) {
         actions: [
           {
             type: 'uri',
-            label: 'Hasil Pencarian',
+            label: 'Operator Details',
             uri: uri,
           },
         ],
@@ -170,7 +174,7 @@ module.exports = async function App(context) {
           const $ = cheerio.load(html);
           const opimg = $(`#image-tab-${cgindex} > a > img`);
           let url = `https://gamepress.gg${opimg.attr('data-cfsrc')}`;
-          url && context.replyImage({
+          opimg && context.replyImage({
             originalContentUrl: url,
             previewImageUrl: url,
           }
@@ -178,6 +182,44 @@ module.exports = async function App(context) {
         }
       }
       );
+    }
+
+    //booru pics
+    else if(eventText.search('!booru') === 0){
+      const srcreq = eventText.substr(7).split(' ').join('+');
+      const srcpg = 1;
+      request(`https://safebooru.donmai.us/posts.json?page=${srcpg}&tags=${srcreq}`,(error, response, html) => {
+        if(!error && response.statusCode == 200){
+            const reqres = JSON.parse(html);
+            const imgcarousel = reqres.map((content) => (
+              content.large_file_url && {
+              imageUrl: content.large_file_url,
+              action: {
+                type: 'message',
+                label: 'View',
+                text: `!idbooru ${content.id}`,
+              }
+            }
+            ))
+            //console.log(imgcarousel);
+            context.replyImageCarouselTemplate('Booru Search', imgcarousel.slice(0,9));
+        }
+      })
+    }
+
+    //id booru pics
+    else if(eventText.search('!idbooru') === 0){
+      const idbooru = eventText.substr(9);
+      request(`https://safebooru.donmai.us/posts/${idbooru}.json`, (error, response, html) => {
+        if(!error && response.statusCode == 200){
+          const reqres = JSON.parse(html);
+          context.replyImage({
+            originalContentUrl: reqres.large_file_url,
+            previewImageUrl: reqres.large_file_url
+          })
+          //console.log(reqres.large_file_url);
+        }
+      })
     }
 
   }
