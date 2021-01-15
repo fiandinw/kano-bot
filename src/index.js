@@ -8,7 +8,7 @@ module.exports = async function App(context) {
     items:[
       {
       type: 'action',
-      action: {type: 'message',label: 'ping me',text:'kanoping'}
+      action: {type: 'message',label: 'info',text:'!info'}
       },
       {
       type: 'action',
@@ -19,17 +19,25 @@ module.exports = async function App(context) {
       action: {type: 'message',label: 'mana kah?',text:'!mnkh ini-itu'}
       },
       {
-        type: 'action',
-        action: {type: 'message',label: 'my anime list',text:'!mal sao'}
-      },
-      {
       type: 'action',
-      action: {type: 'message',label: 'arknights cg',text:'!akcg blue poison 1'}
+      action: {type: 'message',label: 'arknights cg',text:'!akcg blue poison 3'}
       },
       {
       type: 'action',
       action: {type: 'message',label: 'arknights op',text:'!akinfo blue poison'}
       },
+      {
+      type: 'action',
+      action: {type: 'message',label: 'anime search',text:'!anime yuru camp'}
+      },
+      {
+      type: 'action',
+      action: {type: 'message',label: 'manga search',text:'!manga yuru camp'}
+      },
+      {
+      type: 'action',
+      action: {type: 'message',label: 'about',text:'!about'}
+      }
       /*{
       type: 'action',
       action: {type: 'message',label: 'booru search',text:'!booru scenery blue_sky'}
@@ -37,6 +45,33 @@ module.exports = async function App(context) {
     ]
   }};
 
+  //jikan template
+  const jikanres = (srcreq, scrtype, context) => {
+    request(`https://api.jikan.moe/v3/search/${scrtype}?q=${encodeURI(srcreq)}&limit=10`,(error, response, html) => {
+        if(!error && response.statusCode == 200){
+          const reqres = JSON.parse(html);
+          const reqitems = reqres.results.map((item) => ({
+              thumbnailImageUrl: item.image_url,
+              title: item.title.substr(0,39),
+              text: item.type,
+              actions: [
+                {
+                  type: 'message',
+                  label: 'Details',
+                  text: `!id${scrtype} ${item.mal_id}`,
+                },
+              ],
+          }))
+          context.replyCarouselTemplate('MAL Search Result', reqitems);
+        }
+    })
+  }
+
+
+  //maintenance mode
+  context.getUserProfile().then(profile => {
+    if (true/* profile.displayName === 'Alifiandi NW' */){
+  
   if (context.event.isText) {
     //lowercase context.event.text variable
     //console.log('reply is text');
@@ -44,6 +79,14 @@ module.exports = async function App(context) {
     //Bot ping test
     if(eventText === 'kanoping'){
       context.replyText(`pong`);
+    }
+
+    else if (eventText === '!info' || eventText === '!help'){
+      context.replyText(`Kano Bot Beta\n\nList fitur\n!ykh <pertanyaan>\n!mnkh <pilihan 1>-<pilihan 2>-<dst...>\n!anime <judul>\n!manga <judul>\n!akinfo <nama operator>\n!akcg <nama operator> <indeks (1-6)>`);
+    }
+
+    else if (eventText === '!about'){
+      context.replyText(`Kano Bot Beta`);
     }
 
     //Greet
@@ -108,7 +151,7 @@ module.exports = async function App(context) {
     }
 
     //mal feature
-    else if(eventText.search('!mal') === 0 ){
+    /* else if(eventText.search('!mal') === 0 ){
       const malrequest = eventText.substr(5).replace(' ','_');
       const uri = `https://myanimelist.net/search/all?q=${malrequest}&cat=all`;
       context.replyTemplate('MAL Search', {
@@ -124,7 +167,7 @@ module.exports = async function App(context) {
           },
         ],
       });
-    }
+    } */
 
     //ak info
     else if(eventText.search('!akinfo') === 0 ){
@@ -184,6 +227,37 @@ module.exports = async function App(context) {
       );
     }
 
+    //jikan api anime
+    else if(eventText.search('!anime') === 0){
+      jikanres(eventText.substr(7), 'anime', context);
+    }
+
+    //jikan api manga
+    else if(eventText.search('!manga') === 0){
+      jikanres(eventText.substr(7), 'manga', context);
+    }
+
+    //jikan api anime id
+    else if(eventText.search('!idanime') === 0){
+      request(`https://api.jikan.moe/v3/anime/${eventText.substr(9)}`,(error, response, html) => {
+        if(!error && response.statusCode == 200){
+            const reqres = JSON.parse(html);
+            context.replyText(`${reqres.title}\n${reqres.title_japanese}\n\n${reqres.episodes} eps (${reqres.status})\nType: ${reqres.type}\nSource: ${reqres.source}\nGenre: ${reqres.genres.map(i=>i.name)}\n\n${reqres.url}`);
+        }
+      })
+    }
+
+    //jikan api manga id
+    else if(eventText.search('!idmanga') === 0){
+      request(`https://api.jikan.moe/v3/manga/${eventText.substr(9)}`,(error, response, html) => {
+        if(!error && response.statusCode == 200){
+            const reqres = JSON.parse(html);
+            context.replyText(`${reqres.title}\n${reqres.title_japanese}\n\n${reqres.volumes} Volumes\n${reqres.chapters} Chapters\n(${reqres.status})\nType: ${reqres.type}\n\nGenre: ${reqres.genres.map(i=>i.name)}\n\n${reqres.url}`);
+            //console.log(reqres.genres.map(i=>i.name));
+        }
+      })
+    }
+
     //booru pics
     /*else if(eventText.search('!booru') === 0){
       const srcreq = eventText.substr(7).split(' ').join('+');
@@ -223,4 +297,5 @@ module.exports = async function App(context) {
     }*/
 
   }
+}})//maintenance mode
 };
