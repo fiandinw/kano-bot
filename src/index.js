@@ -193,7 +193,7 @@ module.exports = async function App(context) {
             const reqres = JSON.parse(html);
             const imgcarousel = reqres.map((content) => (
               content.large_file_url && {
-              imageUrl: content.large_file_url,
+              imageUrl: content.preview_file_url,
               action: {
                 type: 'message',
                 label: 'View',
