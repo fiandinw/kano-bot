@@ -30,10 +30,10 @@ module.exports = async function App(context) {
       type: 'action',
       action: {type: 'message',label: 'arknights op',text:'!akinfo blue poison'}
       },
-      {
+      /*{
       type: 'action',
       action: {type: 'message',label: 'booru search',text:'!booru scenery blue_sky'}
-      }
+      }*/
     ]
   }};
 
@@ -185,11 +185,12 @@ module.exports = async function App(context) {
     }
 
     //booru pics
-    else if(eventText.search('!booru') === 0){
+    /*else if(eventText.search('!booru') === 0){
       const srcreq = eventText.substr(7).split(' ').join('+');
-      const srcpg = 1;
-      request(`https://safebooru.donmai.us/posts.json?page=${srcpg}&tags=${srcreq}`,(error, response, html) => {
+      console.log(srcreq);
+      request(`https://safebooru.donmai.us/posts.json?tags=${encodeURI(srcreq)}`,(error, response, html) => {
         if(!error && response.statusCode == 200){
+          console.log(response.statusCode);
             const reqres = JSON.parse(html);
             const imgcarousel = reqres.map((content) => (
               content.large_file_url && {
@@ -201,7 +202,6 @@ module.exports = async function App(context) {
               }
             }
             ))
-            //console.log(imgcarousel);
             context.replyImageCarouselTemplate('Booru Search', imgcarousel.slice(0,9));
         }
       })
@@ -220,7 +220,7 @@ module.exports = async function App(context) {
           //console.log(reqres.large_file_url);
         }
       })
-    }
+    }*/
 
   }
 };
