@@ -82,11 +82,17 @@ module.exports = async function App(context) {
     }
 
     else if (eventText === '!info' || eventText === '!help'){
-      context.replyText(`Kano Bot Beta\n\nList fitur\n!ykh <pertanyaan>\n!mnkh <pilihan 1>-<pilihan 2>-<dst...>\n!anime <judul>\n!manga <judul>\n!akinfo <nama operator>\n!akcg <nama operator> <indeks (1-6)>`);
+      context.replyText(`Kano Bot Beta\n\nList fitur\n!ykh <pertanyaan>\n!mnkh <pilihan 1>-<pilihan 2>-<dst...>\n!anime <judul>\n!manga <judul>\n!akinfo <nama operator>\n!akcg <nama operator> <indeks (1-6)>\n!luck`);
     }
 
     else if (eventText === '!about'){
       context.replyText(`Kano Bot Beta`);
+    }
+
+    else if (eventText === '!luck'){
+      context.getUserProfile().then(profile => {
+        context.replyText(`Keberuntungan ${profile.displayName} ${Math.floor(Math.random() * 101)}%`);
+      });
     }
 
     //Greet
