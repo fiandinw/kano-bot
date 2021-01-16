@@ -82,7 +82,7 @@ module.exports = async function App(context) {
     }
 
     else if (eventText === '!info' || eventText === '!help'){
-      context.replyText(`Kano Bot Beta\n\nList fitur\n!ykh <pertanyaan>\n!mnkh <pilihan 1>-<pilihan 2>-<dst...>\n!anime <judul>\n!manga <judul>\n!akinfo <nama operator>\n!akcg <nama operator> <indeks (1-6)>\n!luck`);
+      context.replyText(`Kano Bot Beta\n\nList fitur\n!ykh <pertanyaan>\n!mnkh <pilihan 1>-<pilihan 2>-<dst...>\n!anime <judul>\n!manga <judul>\n!aniday <day (monday-sunday)>\n!akinfo <nama operator>\n!akcg <nama operator> <indeks (1-6)>\n!luck`);
     }
 
     else if (eventText === '!about'){
@@ -260,6 +260,17 @@ module.exports = async function App(context) {
             const reqres = JSON.parse(html);
             context.replyText(`${reqres.title}\n${reqres.title_japanese}\n\n${reqres.volumes} Volumes\n${reqres.chapters} Chapters\n(${reqres.status})\nType: ${reqres.type}\n\nGenre: ${reqres.genres.map(i=>i.name)}\n\n${reqres.url}`);
             //console.log(reqres.genres.map(i=>i.name));
+        }
+      })
+    }
+
+    else if(eventText.search('!aniday') === 0){
+      const day = eventText.substr(8);
+      request(`https://api.jikan.moe/v3/schedule/${day}`,(error, response, html) => {
+        if(!error && response.statusCode == 200){
+            const reqres = JSON.parse(html);
+            const anilist = reqres[day].map((item) => item.title)
+            context.replyText(`${day} anime schedule\n\n${anilist.join('\n')}`);
         }
       })
     }
