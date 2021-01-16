@@ -86,7 +86,19 @@ module.exports = async function App(context) {
     }
 
     else if (eventText === '!about'){
-      context.replyText(`Kano Bot Beta`);
+      context.replyTemplate('Kano Bot About', {
+        type: 'buttons',
+        thumbnailImageUrl: 'https://stickershop.line-scdn.net/stickershop/v1/sticker/11235752/android/sticker.png',
+        title: 'Kano Bot',
+        text: 'Made with love by fiandinw',
+        actions: [
+          {
+            type: 'uri',
+            label: 'Who is kano',
+            uri: 'https://utaite.fandom.com/wiki/Kano',
+          },
+        ],
+      });
     }
 
     else if (eventText === '!luck'){
@@ -181,9 +193,9 @@ module.exports = async function App(context) {
       const uri = `https://aceship.github.io/AN-EN-Tags/akhrchars.html?opname=${akrequest}`;
       context.replyTemplate('Arknights Operator Info', {
         type: 'buttons',
-        thumbnailImageUrl: 'https://stickershop.line-scdn.net/stickershop/v1/sticker/11235734/android/sticker.png',
+        thumbnailImageUrl: 'https://webusstatic.yo-star.com/ark_us_web/pc/img/logo02.924e2f2a.png',
         title: 'Arknights Operator Info',
-        text: 'Fitur ini masih dalam pengembangan',
+        text: 'Operator Info',
         actions: [
           {
             type: 'uri',
