@@ -288,6 +288,7 @@ module.exports = async function App(context) {
       })
     }
 
+    
     //anime chara search
     else if(eventText.search('!chara') === 0){
       const str = eventText.substr(7);
@@ -296,19 +297,23 @@ module.exports = async function App(context) {
             const reqres = JSON.parse(html);
             const imgcarousel = reqres.results.map((item) => (
               item.image_url && {
-              imageUrl: item.image_url,
-                action: {
+              thumbnailImageUrl: item.image_url,
+              title: item.name.substr(0,39),
+              text: item.name,
+                actions: [{
                   type: 'message',
-                  label: item.name.substr(0,11),
+                  label: 'Details',
                   text: `${item.url}`,
-                }
+                },],
               }
             ))
-            context.replyImageCarouselTemplate('Anime Chara Search', imgcarousel);
+            context.replyCarouselTemplate('Character Search Result', imgcarousel);
         }
       })
     }
+    
 
+    
     //seiyuu search
     else if(eventText.search('!seiyuu') === 0){
       const str = eventText.substr(8);
@@ -317,18 +322,21 @@ module.exports = async function App(context) {
             const reqres = JSON.parse(html);
             const imgcarousel = reqres.results.map((item) => (
               item.image_url && {
-              imageUrl: item.image_url,
-                action: {
+              thumbnailImageUrl: item.image_url,
+              title: item.name.substr(0,39),
+              text: item.name,
+                actions: [{
                   type: 'message',
-                  label: item.name.substr(0,11),
+                  label: 'Details',
                   text: `${item.url}`,
-                }
+                },],
               }
             ))
-            context.replyImageCarouselTemplate('Seiyuu Search', imgcarousel);
+            context.replyCarouselTemplate('Seiyuu Search Result', imgcarousel);
         }
       })
     }
+    
 
     //booru pics
     /*else if(eventText.search('!booru') === 0){
