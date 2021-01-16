@@ -11,6 +11,10 @@ module.exports = async function App(context) {
       action: {type: 'message',label: 'info',text:'!info'}
       },
       {
+        type: 'action',
+        action: {type: 'message',label: 'about',text:'!about'}
+      },
+      {
       type: 'action',
       action: {type: 'message',label: 'ya kah?',text:'!ykh apakah'}
       },
@@ -34,10 +38,6 @@ module.exports = async function App(context) {
       type: 'action',
       action: {type: 'message',label: 'manga search',text:'!manga yuru camp'}
       },
-      {
-      type: 'action',
-      action: {type: 'message',label: 'about',text:'!about'}
-      }
       /*{
       type: 'action',
       action: {type: 'message',label: 'booru search',text:'!booru scenery blue_sky'}
@@ -82,7 +82,7 @@ module.exports = async function App(context) {
     }
 
     else if (eventText === '!info' || eventText === '!help'){
-      context.replyText(`Kano Bot Beta\n\nList fitur\n!ykh <pertanyaan>\n!mnkh <pilihan 1>-<pilihan 2>-<dst...>\n!anime <judul>\n!manga <judul>\n!aniday <day (monday-sunday)>\n!akinfo <nama operator>\n!akcg <nama operator> <indeks (1-6)>\n!luck`);
+      context.replyText(`Kano Bot Beta\n\nList fitur\n!ykh <pertanyaan>\n!mnkh <pilihan 1>-<pilihan 2>-<dst...>\n!anime <judul>\n!manga <judul>\n!akinfo <nama operator>\n!akcg <nama operator> <indeks (1-6)>\n!luck\n!aniday <day (monday-sunday)>\n!chara <anime character>\n!seiyuu <voice actor name>`);
     }
 
     else if (eventText === '!about'){
@@ -276,6 +276,7 @@ module.exports = async function App(context) {
       })
     }
 
+    //anime schedule
     else if(eventText.search('!aniday') === 0){
       const day = eventText.substr(8);
       request(`https://api.jikan.moe/v3/schedule/${day}`,(error, response, html) => {
@@ -283,6 +284,48 @@ module.exports = async function App(context) {
             const reqres = JSON.parse(html);
             const anilist = reqres[day].map((item) => item.title)
             context.replyText(`${day} anime schedule\n\n${anilist.join('\n')}`);
+        }
+      })
+    }
+
+    //anime chara search
+    else if(eventText.search('!chara') === 0){
+      const str = eventText.substr(7);
+      request(`https://api.jikan.moe/v3/search/character?q=${encodeURI(str)}&limit=3`,(error, response, html) => {
+        if(!error && response.statusCode == 200){
+            const reqres = JSON.parse(html);
+            const imgcarousel = reqres.results.map((item) => (
+              item.image_url && {
+              imageUrl: item.image_url,
+                action: {
+                  type: 'message',
+                  label: item.name.substr(0,11),
+                  text: `${item.url}`,
+                }
+              }
+            ))
+            context.replyImageCarouselTemplate('Anime Chara Search', imgcarousel);
+        }
+      })
+    }
+
+    //seiyuu search
+    else if(eventText.search('!seiyuu') === 0){
+      const str = eventText.substr(8);
+      request(`https://api.jikan.moe/v3/search/person?q=${encodeURI(str)}&limit=3`,(error, response, html) => {
+        if(!error && response.statusCode == 200){
+            const reqres = JSON.parse(html);
+            const imgcarousel = reqres.results.map((item) => (
+              item.image_url && {
+              imageUrl: item.image_url,
+                action: {
+                  type: 'message',
+                  label: item.name.substr(0,11),
+                  text: `${item.url}`,
+                }
+              }
+            ))
+            context.replyImageCarouselTemplate('Seiyuu Search', imgcarousel);
         }
       })
     }
