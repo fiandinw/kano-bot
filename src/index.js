@@ -62,7 +62,7 @@ module.exports = async function App(context) {
                 },
               ],
           }))
-          context.replyCarouselTemplate('MAL Search Result', reqitems);
+          reqres.results[0] && context.replyCarouselTemplate('MAL Search Result', reqitems);
         }
     })
   }
@@ -283,7 +283,7 @@ module.exports = async function App(context) {
         if(!error && response.statusCode == 200){
             const reqres = JSON.parse(html);
             const anilist = reqres[day].map((item) => item.title)
-            context.replyText(`${day} anime schedule\n\n${anilist.join('\n')}`);
+            reqres[day] && context.replyText(`${day} anime schedule\n\n${anilist.join('\n')}`);
         }
       })
     }
@@ -307,7 +307,7 @@ module.exports = async function App(context) {
                 },],
               }
             ))
-            context.replyCarouselTemplate('Character Search Result', imgcarousel);
+            reqres.results[0] && context.replyCarouselTemplate('Character Search Result', imgcarousel);
         }
       })
     }
@@ -332,11 +332,10 @@ module.exports = async function App(context) {
                 },],
               }
             ))
-            context.replyCarouselTemplate('Seiyuu Search Result', imgcarousel);
+            reqres.results[0] && context.replyCarouselTemplate('Seiyuu Search Result', imgcarousel);
         }
       })
     }
-    
 
     //booru pics
     /*else if(eventText.search('!booru') === 0){
