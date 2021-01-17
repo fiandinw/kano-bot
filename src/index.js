@@ -342,7 +342,7 @@ module.exports = async function App(context) {
               }
             }
             ))
-            reqres[0] && context.replyImageCarouselTemplate('Booru Search', imgcarousel.slice(0,9));
+            reqres[0].preview_file_url && context.replyImageCarouselTemplate('Booru Search', imgcarousel.slice(0,9));
         }
       })
     }
