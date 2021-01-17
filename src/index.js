@@ -168,25 +168,6 @@ module.exports = async function App(context) {
       context.replyText(`Aku pilih\n\n${choose[Math.floor(Math.random() * choose.length)]}`);
     }
 
-    //mal feature
-    /* else if(eventText.search('!mal') === 0 ){
-      const malrequest = eventText.substr(5).replace(' ','_');
-      const uri = `https://myanimelist.net/search/all?q=${malrequest}&cat=all`;
-      context.replyTemplate('MAL Search', {
-        type: 'buttons',
-        thumbnailImageUrl: 'https://stickershop.line-scdn.net/stickershop/v1/sticker/11235734/android/sticker.png',
-        title: 'My Anime List',
-        text: 'Fitur ini masih dalam pengembangan',
-        actions: [
-          {
-            type: 'uri',
-            label: 'Hasil Pencarian',
-            uri: uri,
-          },
-        ],
-      });
-    } */
-
     //ak info
     else if(eventText.search('!akinfo') === 0 ){
       const akrequest = eventText.substr(8).replace(' ','_');
@@ -271,7 +252,6 @@ module.exports = async function App(context) {
         if(!error && response.statusCode == 200){
             const reqres = JSON.parse(html);
             context.replyText(`${reqres.title}\n${reqres.title_japanese}\n\n${reqres.volumes} Volumes\n${reqres.chapters} Chapters\n(${reqres.status})\nType: ${reqres.type}\n\nGenre: ${reqres.genres.map(i=>i.name)}\n\n${reqres.url}`);
-            //console.log(reqres.genres.map(i=>i.name));
         }
       })
     }
@@ -288,7 +268,6 @@ module.exports = async function App(context) {
       })
     }
 
-    
     //anime chara search
     else if(eventText.search('!chara') === 0){
       const str = eventText.substr(7);
@@ -311,8 +290,6 @@ module.exports = async function App(context) {
         }
       })
     }
-    
-
     
     //seiyuu search
     else if(eventText.search('!seiyuu') === 0){
@@ -337,8 +314,18 @@ module.exports = async function App(context) {
       })
     }
 
+    //gabut
+    else if(eventText === '!gabut'){
+      request(`https://www.boredapi.com/api/activity`,(error, response, html) => {
+        if(!error && response.statusCode == 200){
+            const reqres = JSON.parse(html);
+            context.replyText(`Something to do\n\n${reqres.activity}\n(${reqres.type})\n${reqres.participants} participants\n${reqres.link}`)
+        }
+      })
+    }
+
     //booru pics
-    /*else if(eventText.search('!booru') === 0){
+    else if(eventText.search('!booru') === 0){
       const srcreq = eventText.substr(7).split(' ').join('+');
       console.log(srcreq);
       request(`https://safebooru.donmai.us/posts.json?tags=${encodeURI(srcreq)}`,(error, response, html) => {
@@ -351,26 +338,26 @@ module.exports = async function App(context) {
               action: {
                 type: 'message',
                 label: 'View',
-                text: `!idbooru ${content.id}`,
+                text: `https://safebooru.donmai.us/posts/${content.id}`,
               }
             }
             ))
-            context.replyImageCarouselTemplate('Booru Search', imgcarousel.slice(0,9));
+            reqres[0] && context.replyImageCarouselTemplate('Booru Search', imgcarousel.slice(0,9));
         }
       })
     }
 
+    /*
     //id booru pics
     else if(eventText.search('!idbooru') === 0){
       const idbooru = eventText.substr(9);
       request(`https://safebooru.donmai.us/posts/${idbooru}.json`, (error, response, html) => {
         if(!error && response.statusCode == 200){
           const reqres = JSON.parse(html);
-          context.replyImage({
+          reqres.large_file_url && context.replyImage({
             originalContentUrl: reqres.large_file_url,
             previewImageUrl: reqres.large_file_url
           })
-          //console.log(reqres.large_file_url);
         }
       })
     }*/
