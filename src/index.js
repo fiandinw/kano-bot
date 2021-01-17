@@ -323,45 +323,6 @@ module.exports = async function App(context) {
         }
       })
     }
-
-    //booru pics
-    else if(eventText.search('!booru') === 0){
-      const srcreq = eventText.substr(7).split(' ').join('+');
-      console.log(srcreq);
-      request(`https://safebooru.donmai.us/posts.json?tags=${encodeURI(srcreq)}`,(error, response, html) => {
-        if(!error && response.statusCode == 200){
-          console.log(response.statusCode);
-            const reqres = JSON.parse(html);
-            const imgcarousel = reqres.map((content) => (
-              content.large_file_url && {
-              imageUrl: content.preview_file_url,
-              action: {
-                type: 'message',
-                label: 'View',
-                text: `https://safebooru.donmai.us/posts/${content.id}`,
-              }
-            }
-            ))
-            reqres[0].preview_file_url && context.replyImageCarouselTemplate('Booru Search', imgcarousel.slice(0,9));
-        }
-      })
-    }
-
-    /*
-    //id booru pics
-    else if(eventText.search('!idbooru') === 0){
-      const idbooru = eventText.substr(9);
-      request(`https://safebooru.donmai.us/posts/${idbooru}.json`, (error, response, html) => {
-        if(!error && response.statusCode == 200){
-          const reqres = JSON.parse(html);
-          reqres.large_file_url && context.replyImage({
-            originalContentUrl: reqres.large_file_url,
-            previewImageUrl: reqres.large_file_url
-          })
-        }
-      })
-    }*/
-
   }
 }})//maintenance mode
 };
