@@ -123,7 +123,7 @@ module.exports = async function App(context) {
     eventText.includes('goblog')||
     eventText.includes('ngentot')){
       context.getUserProfile().then(profile => {
-        const swearreply = [`Gak boleh kasar ${profile.displayName} >:()`,`A S T A G H F I R U L L A H`, `${profile.displayName} bahasanya yang baik yah :)`];
+        const swearreply = [`Gak boleh kasar ${profile.displayName} >:(`,`A S T A G H F I R U L L A H`, `${profile.displayName} bahasanya yang baik yah :)`];
         context.replyText(swearreply[Math.floor(Math.random() * swearreply.length)]);
       });
     }
