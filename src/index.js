@@ -123,7 +123,8 @@ module.exports = async function App(context) {
     eventText.includes('goblog')||
     eventText.includes('ngentot')){
       context.getUserProfile().then(profile => {
-        context.replyText(`Gak boleh kasar ${profile.displayName} >:(`);
+        const swearreply = [`Gak boleh kasar ${profile.displayName} >:()`,`A S T A G H F I R U L L A H`, `${profile.displayName} bahasanya yang baik yah :)`];
+        context.replyText(swearreply[Math.floor(Math.random() * swearreply.length)]);
       });
     }
 
@@ -157,9 +158,7 @@ module.exports = async function App(context) {
     //ya kah feature
     else if(eventText.search('!ykh') === 0){
       const ykhreply = ['Ya', 'Gak'];
-      context.getUserProfile().then(profile => {
-        context.replyText(`${profile.displayName}: ${context.event.text.substr(5)}\n\n${ykhreply[Math.floor(Math.random() * ykhreply.length)]}`);
-      });
+        context.replyText(`${context.event.text.substr(5)}\n\n${ykhreply[Math.floor(Math.random() * ykhreply.length)]}`);
     }
 
     // mana kah feature
