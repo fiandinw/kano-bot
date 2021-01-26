@@ -97,6 +97,11 @@ module.exports = async function App(context) {
             label: 'Who is kano',
             uri: 'https://utaite.fandom.com/wiki/Kano',
           },
+          {
+            type: 'uri',
+            label: 'Contribute',
+            uri: 'https://github.com/fiandinw/kano-bot/issues',
+          },
         ],
       });
     }
