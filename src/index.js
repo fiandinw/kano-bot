@@ -280,7 +280,7 @@ module.exports = async function App(context) {
     //anime chara search
     else if(eventText.search('!chara') === 0){
       const str = eventText.substr(7);
-      request(`https://api.jikan.moe/v3/search/character?q=${encodeURI(str)}&limit=3`,(error, response, html) => {
+      request(`https://api.jikan.moe/v3/search/character?q=${encodeURI(str)}&limit=5`,(error, response, html) => {
         if(!error && response.statusCode == 200){
             const reqres = JSON.parse(html);
             const imgcarousel = reqres.results.map((item) => (
@@ -303,22 +303,22 @@ module.exports = async function App(context) {
     //seiyuu search
     else if(eventText.search('!seiyuu') === 0){
       const str = eventText.substr(8);
-      request(`https://api.jikan.moe/v3/search/person?q=${encodeURI(str)}&limit=3`,(error, response, html) => {
+      request(`https://seiyuu.moe:9000/api/seiyuu/?Name=${encodeURI(str)}`,(error, response, html) => {
         if(!error && response.statusCode == 200){
             const reqres = JSON.parse(html);
             const imgcarousel = reqres.results.map((item) => (
-              item.image_url && {
-              thumbnailImageUrl: item.image_url,
+              item.imageUrl && {
+              thumbnailImageUrl: item.imageUrl,
               title: item.name.substr(0,39),
               text: item.name,
                 actions: [{
                   type: 'message',
                   label: 'Details',
-                  text: `${item.url}`,
+                  text: `https://myanimelist.net/people/${item.malId}`,
                 },],
               }
             ))
-            reqres.results[0] && context.replyCarouselTemplate('Seiyuu Search Result', imgcarousel);
+            reqres.results[0] && context.replyCarouselTemplate('Seiyuu Search Result', imgcarousel.slice(0,4));
         }
       })
     }
