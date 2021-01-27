@@ -16,11 +16,11 @@ module.exports = async function App(context) {
       },
       {
       type: 'action',
-      action: {type: 'message',label: 'ya kah?',text:'!ykh apakah'}
+      action: {type: 'message',label: 'tanya',text:'!ykh apakah'}
       },
       {
       type: 'action',
-      action: {type: 'message',label: 'mana kah?',text:'!mnkh ini-itu'}
+      action: {type: 'message',label: 'pilih',text:'!mnk ini-itu'}
       },
       {
       type: 'action',
@@ -82,7 +82,7 @@ module.exports = async function App(context) {
     }
 
     else if (eventText === '!info' || eventText === '!help'){
-      context.replyText(`Kano Bot Beta\n\nList fitur\n!ykh <pertanyaan>\n!mnkh <pilihan 1>-<pilihan 2>-<dst...>\n!anime <judul>\n!manga <judul>\n!akinfo <nama operator>\n!akcg <nama operator> <indeks (1-6)>\n!luck\n!aniday <day (monday-sunday)>\n!chara <anime character>\n!seiyuu <voice actor name>`);
+      context.replyText(`Kano Bot Beta\n\nList fitur\n!ykh <pertanyaan>\n!mnk <pilihan 1>-<pilihan 2>-<dst...>\n!anime <judul>\n!manga <judul>\n!akinfo <nama operator>\n!akcg <nama operator> <indeks (1-6)>\n!luck\n!aniday <day (monday-sunday)>\n!chara <anime character>\n!seiyuu <voice actor name>\n!todo\n!qotd`);
     }
 
     else if (eventText === '!about'){
@@ -101,6 +101,11 @@ module.exports = async function App(context) {
             type: 'uri',
             label: 'Contribute',
             uri: 'https://github.com/fiandinw/kano-bot/issues',
+          },
+          {
+            type: 'uri',
+            label: 'Blog',
+            uri: 'https://cdn.dribbble.com/users/563509/screenshots/3210197/comingsoon_01.gif',
           },
         ],
       });
@@ -161,14 +166,14 @@ module.exports = async function App(context) {
     }
 
     //ya kah feature
-    else if(eventText.search('!ykh') === 0){
+    else if(eventText.search('!ykh') === 0 || eventText.search('!ynm') === 0){
       const ykhreply = ['Ya', 'Gak'];
         context.replyText(`${context.event.text.substr(5)}\n\n${ykhreply[Math.floor(Math.random() * ykhreply.length)]}`);
     }
 
     // mana kah feature
-    else if(eventText.search('!mnkh') === 0){
-      const choose = context.event.text.substr(6).split('-');
+    else if(eventText.search('!mnk') === 0 || eventText.search('!chs') === 0){
+      const choose = context.event.text.substr(5).split('-');
       context.replyText(`Aku pilih\n\n${choose[Math.floor(Math.random() * choose.length)]}`);
     }
 
@@ -319,11 +324,21 @@ module.exports = async function App(context) {
     }
 
     //gabut
-    else if(eventText === '!gabut'){
+    else if(eventText === '!todo'){
       request(`https://www.boredapi.com/api/activity`,(error, response, html) => {
         if(!error && response.statusCode == 200){
             const reqres = JSON.parse(html);
             context.replyText(`Something to do\n\n${reqres.activity}\n(${reqres.type})\n${reqres.participants} participants\n${reqres.link}`)
+        }
+      })
+    }
+
+    //quote of the day
+    else if(eventText === '!qotd'){
+      request(`https://api.quotable.io/random`,(error, response, html) => {
+        if(!error && response.statusCode == 200){
+            const reqres = JSON.parse(html);
+            context.replyText(`${reqres.content}\n-${reqres.author}`)
         }
       })
     }
