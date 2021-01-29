@@ -174,7 +174,7 @@ module.exports = async function App(context) {
     // mana kah feature
     else if(eventText.search('!mnk') === 0 || eventText.search('!chs') === 0){
       const choose = context.event.text.substr(5).split('-');
-      context.replyText(`Aku pilih\n\n${choose[Math.floor(Math.random() * choose.length)]}`);
+      context.replyText(`Aku pilih\n\n${choose[Math.floor(Math.random() * choose.length)].trim()}`);
     }
 
     //ak info
@@ -225,7 +225,7 @@ module.exports = async function App(context) {
           const $ = cheerio.load(html);
           const opimg = $(`#image-tab-${cgindex} > a > img`);
           let url = `https://gamepress.gg${opimg.attr('data-cfsrc')}`;
-          opimg && context.replyImage({
+          opimg.attr('data-cfsrc') && context.replyImage({
             originalContentUrl: url,
             previewImageUrl: url,
           }
@@ -267,7 +267,33 @@ module.exports = async function App(context) {
 
     //anime schedule
     else if(eventText.search('!aniday') === 0){
-      const day = eventText.substr(8);
+      let day = eventText.substr(8).trim();
+      switch(day){
+        case '1':
+        case 'senin':
+          day = 'monday';break;
+        case '2':
+        case 'selasa':
+          day = 'tuesday';break;
+        case '3':
+        case 'rabu':
+          day = 'wednesday';break;
+        case '4':
+        case 'kamis':
+          day = 'thursday';break;
+        case '5':
+        case 'jumat':
+        case 'jum\'at':
+          day = 'friday';break;
+        case '6':
+        case 'sabtu':
+          day = 'saturday';break;
+        case '7':
+        case 'minggu':
+          day = 'sunday';break;
+        default:
+          break;
+      }
       request(`https://api.jikan.moe/v3/schedule/${day}`,(error, response, html) => {
         if(!error && response.statusCode == 200){
             const reqres = JSON.parse(html);
