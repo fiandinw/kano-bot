@@ -215,7 +215,9 @@ module.exports = async function App(context) {
                     if (!error && response.statusCode == 200) {
                       const $ = cheerio.load(html);
                       const title = $('body > div.page-wrap > div > div.main-wrap > div.main-col-wrap > div.c-box.w-for-tips-custom-style > div.article-wrap > div.article-hero.is-plain > h1 > span').text();
-                      links && context.replyText(`${title}\n---work in progress---\n---work in progress---\n---work in progress---`);
+                      const rarity = $('#article-body > div.ark_data > table > tbody > tr:nth-child(2) > td:nth-child(1)').text();
+                      const role = $('#article-body > div.ark_data > table > tbody > tr:nth-child(2) > td:nth-child(2)').text();
+                      links && context.replyText(`${title}\n${role} (${rarity})`);
                     }
                   })
                 }
