@@ -106,12 +106,12 @@ module.exports = async function App(context) {
       if (context.event.isText) {
         //lowercase context.event.text variable
         //console.log('reply is text');
-        const eventText = context.event.text.toLowerCase();
+        const eventText = context.event.text.toLowerCase().trim();
         //Bot ping test
         if (eventText === 'kanoping') {
           context.replyText(`pong`);
         } else if (eventText === '!info' || eventText === '!help') {
-          context.replyText(`Kano Bot Beta\n\nList fitur\n!ykh <pertanyaan>\n!mnk <pilihan 1>-<pilihan 2>-<dst...>\n!anime <judul>\n!manga <judul>\n!akinfo <nama operator>\n!akcg <nama operator> <indeks (1-6)>\n!luck\n!aniday <day (monday-sunday)>\n!chara <anime character>\n!seiyuu <voice actor name>\n!todo\n!qotd`);
+          context.replyText(`Kano Bot Beta\n\nList fitur\n!ykh <pertanyaan>\n!mnk <pilihan 1>-<pilihan 2>-<dst...>\n!anime <judul>\n!manga <judul>\n!akinfo <nama operator>\n!akcg <nama operator> <indeks (1-6)>\n!luck\n!aniday <day (monday-sunday)>\n!chara <anime character>\n!seiyuu <voice actor name>\n!todo\n!qotd\n!lovecalc <nama 1> - <nama 2>`);
         } else if (eventText === '!about') {
           context.replyTemplate('Kano Bot About', {
             type: 'buttons',
@@ -131,7 +131,7 @@ module.exports = async function App(context) {
               {
                 type: 'uri',
                 label: 'Blog',
-                uri: 'https://cdn.dribbble.com/users/563509/screenshots/3210197/comingsoon_01.gif',
+                uri: 'https://fiandinw.github.io/blog/',
               },
             ],
           });
@@ -415,6 +415,30 @@ module.exports = async function App(context) {
               context.replyText(`${reqres.content}\n-${reqres.author}`)
             }
           })
+        }
+
+        //lovecalc
+        else if (eventText.search('!lovecalc') === 0) {
+          const choose = context.event.text.substr(10).split('-');
+          const options = {
+            method: 'GET',
+            url: 'https://love-calculator.p.rapidapi.com/getPercentage',
+            qs: {
+              fname: choose[0],
+              sname: choose[1]
+            },
+            headers: {
+              'x-rapidapi-key': process.env.X_RAPIDAPI_KEY,
+              'x-rapidapi-host': 'love-calculator.p.rapidapi.com',
+              useQueryString: true
+            }
+          };
+
+          request(options, function (error, response, body) {
+            if(!error && response.statusCode == 200){
+              context.replyText(`${body.fname}\n< ${body.percentage}% 3\n${body.sname}\n\n${body.result}`)
+            }
+          });
         }
       }
     }
